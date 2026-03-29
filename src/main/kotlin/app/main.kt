@@ -2,22 +2,48 @@ package app
 
 import core.Foro
 
-fun capsulaComienzo(): Boolean {
+fun registroUsuario(foro: Foro) {
+    print("Bienvenido al panel de registro de usuarios, por favor ingrese su nombre: ")
+    val nombre = readln().replaceFirstChar {it.uppercase()}
+    print("Ahora ingrese una contraseña segura: ")
+    // Implementar metodo para que no se vea la contraseña en el terminal
+    val contrasenaNuevoUsuario = readln()
+    foro.registrarUsuario(nombre, contrasenaNuevoUsuario)
+}
+fun inicioSesion(foro: Foro) {
+    print("Bienvenido al panel de inicio de sesión, por favor ingrese su id: ")
+    val idUsuario = readln().toIntOrNull() ?: 10000000
+    print("Ahora introduzca su contraseña")
+    val contraUsuario = readln()
+
+}
+
+fun menuDeInicio(foro: Foro) {
     do {
-        menuInicioSesion()
+        print("""
+            --------------------
+            Inicio de sesión
+            --------------------
+            1. Iniciar sesión
+            2. Registrarse
+            3. Sesión de invitado (solo lectura) // ESTO SE IMPLEMENTARÁ EN LA SIGUIENTE VERSIÓN
+            4. Salir del programa
+            --------------------
+        """.trimIndent())
+        print("\nEscoja la opció que quiere hacer: ")
         val opcio = readln()
         when (opcio) {
             "1" -> {
-                print("Ini")
-                return true
-            } // Iniciar sesión
+                // Iniciar sesión
+                inicioSesion(foro)
+            }
             "2" -> {
-                print("regis")
-                return true
-            } // Registro
-            "3" -> {
-                print("invi")
-                return true
+                // Registro usuarios
+                registroUsuario(foro)
+            }
+            "84938493" -> {
+                // Aquí va la sesión de invitado (siguiente versión)
+                print("pendiente de actualización")
             } // Sesion de invitado
             "4" -> {
                 print("Saliendo del programa")
@@ -25,21 +51,6 @@ fun capsulaComienzo(): Boolean {
             else -> print("Escribe una opción valida (1-4).")
         }
     } while (opcio != "4")
-    return false
-
-}
-fun menuInicioSesion() {
-
-    print("""
-        --------------------
-        Inicio de sesión
-        --------------------
-        1. Iniciar sesión
-        2. Registrarse
-        3. Sesión de invitado (solo lectura)
-        4. Salir del programa
-        --------------------
-    """.trimIndent())
 }
 fun iniciarSesion() {
 
@@ -50,8 +61,6 @@ fun sesionInvitado() {
 fun main() {
 
     val foro = Foro()
-    val salir = capsulaComienzo()
-    if (!salir) {
-        // Arreglar inicio de sesión.
-    }
+    val salir = menuDeInicio(foro)
+
 }

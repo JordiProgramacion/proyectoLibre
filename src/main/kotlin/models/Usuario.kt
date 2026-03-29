@@ -1,6 +1,6 @@
 package models
 
-class Usuario(val nom: String, val id: Int, var sesion: Boolean = false) {
+open class Usuario(val nom: String, val id: Int, var sesion: Boolean = false, var escritura: Boolean = true, val contrasena: String) {
 
     fun identificarse() {
 
