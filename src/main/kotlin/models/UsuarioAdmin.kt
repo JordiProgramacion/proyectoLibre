@@ -7,5 +7,13 @@ class UsuarioAdmin(nom: String, id: Int, sesion: Boolean = false, val permisos: 
         print("por haceer")
         return 12
     }
+    override fun iniciarSesion() {
+        sesion = true
+        println("Has iniciado sesión como administrador.")
+    }
+    override fun cerrarSesion() {
+        sesion = false
+        println("La sesión de administrador se ha cerrado.")
+    }
 
 }

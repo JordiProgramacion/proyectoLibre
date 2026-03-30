@@ -1,6 +1,7 @@
 package app
 
 import core.Foro
+import models.Usuario
 
 fun registroUsuario(foro: Foro) {
     print("Bienvenido al panel de registro de usuarios, por favor ingrese su nombre: ")
@@ -13,11 +14,10 @@ fun registroUsuario(foro: Foro) {
 fun inicioSesion(foro: Foro) {
     print("Bienvenido al panel de inicio de sesión, por favor ingrese su id: ")
     val idUsuario = readln().toIntOrNull() ?: 10000000
-    print("Ahora introduzca su contraseña")
+    print("Ahora introduzca su contraseña: ")
     val contraUsuario = readln()
-
+    foro.iniciarSesion(idUsuario, contraUsuario)
 }
-
 fun menuDeInicio(foro: Foro) {
     do {
         print("""
@@ -50,7 +50,7 @@ fun menuDeInicio(foro: Foro) {
             }
             else -> print("Escribe una opción valida (1-4).")
         }
-    } while (opcio != "4")
+    } while (opcio != "4")//haceralgo para saalir al iniciar seson
 }
 fun iniciarSesion() {
 
@@ -61,6 +61,8 @@ fun sesionInvitado() {
 fun main() {
 
     val foro = Foro()
+    // hacer algo inicio sesión
     val salir = menuDeInicio(foro)
-
+    print("golaaaaaaaa")
+    val prueba = readln()
 }
