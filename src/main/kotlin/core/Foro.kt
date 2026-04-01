@@ -3,6 +3,7 @@ package core
 import models.Pregunta
 import models.Usuario
 import models.UsuarioAdmin
+import app.main
 
 class Foro() {
 
@@ -43,7 +44,7 @@ class Foro() {
             println("El id introducido no pertenece a ningun usuario.")
             return false
         }
-        println("Error inesperado, vuelva a intentarlo, si este error permanece contacte con un administrador \nmandado un mail a la siguiente dirección: jmart3@insdanielblanxart.cat")
+        println("La contraseña es incorrecta, asegurese de poner bien tanto el id como su contraseña para poder iniciar \nsesión correctamente.")
         return false
     }
 }
