@@ -4,7 +4,7 @@ class UsuarioAdmin(nom: String, id: Int, sesion: Boolean = false, val permisos: 
     Usuario(nom, id, sesion, escritura, contrasena) {
 
     fun banear(usuario: Usuario, numero: Int): Int {
-        print("por haceer")
+        print("por hacer")
         return 12
     }
     override fun iniciarSesion() {

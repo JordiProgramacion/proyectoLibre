@@ -1,6 +1,7 @@
 package app
 
 import core.Foro
+import utils.Utils
 
 fun registroUsuario(foro: Foro) {
     print("Bienvenido al panel de registro de usuarios, por favor ingrese su nombre: ")
@@ -71,6 +72,9 @@ fun menuMenuSesionIniciada() {
         ------------------------------------
     """.trimIndent())
 }
+fun hacerPregunta() {
+    // hacer pregunta
+}
 fun menuSesionIniciada(foro: Foro): Boolean {
     do {
         menuMenuSesionIniciada()
@@ -90,6 +94,7 @@ fun menuSesionIniciada(foro: Foro): Boolean {
                 return true
             }
             "5" -> {
+                println("Ahora mismo hay un total de: ${Utils.contarPreguntas(foro.preguntas)}")
                 return true
             }
             "0" -> {

@@ -3,7 +3,6 @@ package core
 import models.Pregunta
 import models.Usuario
 import models.UsuarioAdmin
-import app.main
 
 class Foro() {
 
@@ -12,15 +11,17 @@ class Foro() {
     val usuarios: MutableList<Usuario> = mutableListOf()
     private val administradores: MutableList<UsuarioAdmin> = mutableListOf()
     private val idS = usuarios.size + administradores.size + 1
+    private val idsPreguntas = preguntas.size + 1
 
     fun anadirListaUsuarios(usuario: Usuario): Boolean {
         return usuarios.add(usuario)
     }
-    fun crearPregunta() {
-        
+    fun crearPregunta(nomCreador: String, idCreador: Int, titulo: String, descripcion: String, idPregunta: Int) {
+        val idNuevaPregunta = idsPreguntas
+
     }
     fun baneoUsuario() {
-
+// POR HACER
     }
     fun registrarUsuario(nom: String, contrasena: String) {
         val idNuevoUsuario = idS
