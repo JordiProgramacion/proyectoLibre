@@ -16,9 +16,15 @@ class Foro() {
     fun anadirListaUsuarios(usuario: Usuario): Boolean {
         return usuarios.add(usuario)
     }
-    fun crearPregunta(nomCreador: String, idCreador: Int, titulo: String, descripcion: String, idPregunta: Int) {
+    fun crearPregunta(nomCreador: String, idCreador: Int, titulo: String, descripcion: String) {
         val idNuevaPregunta = idsPreguntas
-
+        val nuevaPregunta = Pregunta(titulo, idNuevaPregunta, descripcion, nomCreador, idCreador)
+        val anadido = preguntas.add(nuevaPregunta)
+        if (anadido) {
+            println("Se ha añadido la pregunta correctamente.")
+        } else {
+            println("Error, la pregunta no se ha añadido.")
+        }
     }
     fun baneoUsuario() {
 // POR HACER
@@ -47,5 +53,52 @@ class Foro() {
         }
         println("La contraseña es incorrecta, asegurese de poner bien tanto el id como su contraseña para poder iniciar \nsesión correctamente.")
         return false
+    }
+    fun mostrarPreguntasTotales(preguntas: MutableList<Pregunta>) {
+        if (preguntas.isEmpty()) {
+            println("Todavía no hay ninguna pregunta, puedes escribir la primera!!!")
+        } else {
+            preguntas.forEach {
+                println("""
+                ====================================================
+                |            INFORMACIÓN DE LA PREGUNTA            |
+                ====================================================
+        
+                TÍTULO:      ${it.titulo}
+                CREADOR:     ${it.nombreAutor}
+          
+                DESCRIPCIÓN:
+                ${it.descripcion}
+          
+                ====================================================
+            """.trimIndent())
+            }
+        }
+    }
+    fun mostrarPreguntasPropias(preguntas: MutableList<Pregunta>, usuario: Usuario) {
+        // Hacemos otra lista con las preguntas buenas
+        val misPreguntas = preguntas.filter { it.idAutor == usuario.id }
+
+        if (misPreguntas.isEmpty()) {
+            println("Todavía no has publicado ninguna pregunta.")
+        } else {
+            misPreguntas.forEach {
+                println("""
+                ====================================================
+                |              DETALLES DE LA PREGUNTA             |
+                ====================================================
+                  > ID PREGUNTA: #${it.id}
+                  > TÍTULO:      ${it.titulo}
+    
+                  DESCRIPCIÓN:
+                  ${it.descripcion}
+
+                ----------------------------------------------------
+                  DATOS DEL AUTOR
+                  ID: ${it.idAutor} | Nombre: ${it.nombreAutor}
+               ====================================================
+            """.trimIndent())
+            }
+        }
     }
 }

@@ -3,7 +3,7 @@ package app
 import core.Foro
 import utils.Utils
 import models.Usuario
-import models.UsuarioInvitado
+// Todavía no se usa import models.UsuarioInvitado
 
 fun registroUsuario(foro: Foro) {
     print("Bienvenido al panel de registro de usuarios, por favor ingrese su nombre: ")
@@ -83,11 +83,17 @@ fun menuMenuSesionIniciada() {
         ------------------------------------
     """.trimIndent())
 }
-fun verPreguntas(foro: Foro) {
-
+fun hacerPregunta(foro: Foro, usuario: Usuario) {
+    print("Escribe el titulo de la pregunta, ej: Ordenador roto. ")
+    val titulo = readln().trim().replaceFirstChar { it.uppercase() }
+    print("Escribe la descripción de tu pregunta, ej: El ordenador se enciende\npero la pantalla no da señal. ")
+    val descripcion = readln().trim().replaceFirstChar { it.uppercase() }
+    foro.crearPregunta(usuario.nom, usuario.id, titulo, descripcion)
 }
-fun hacerPregunta(foro: Foro) {
-
+fun buscarPorId(foro: Foro) {
+    print("Id a buscar: ")
+    val id = readln().toIntOrNull() ?: 0
+    Utils.buscarPorID(foro, id)
 }
 fun menuSesionIniciada(foro: Foro, usuario: Usuario): Boolean {
     do {
@@ -95,26 +101,12 @@ fun menuSesionIniciada(foro: Foro, usuario: Usuario): Boolean {
         print("\nEscoja la opció que quiere hacer: ")
         val opcio = readln()
         when (opcio) {
-            "1" -> {
-                verPreguntas(foro)
-
-            }
-            "2" -> {
-                hacerPregunta(foro)
-
-            }
-            "3" -> {
-
-            }
-            "4" -> {
-
-            }
-            "5" -> {
-                println("Ahora mismo hay un total de: ${Utils.contarPreguntas(foro.preguntas)}")
-            }
-            "0" -> {
-                println("Cerrando sesión...")
-            }
+            "1" -> foro.mostrarPreguntasTotales(foro.preguntas)
+            "2" -> hacerPregunta(foro, usuario)
+            "3" -> foro.mostrarPreguntasPropias(foro.preguntas, usuario)
+            "4" -> buscarPorId(foro)
+            "5" -> println("Ahora mismo hay un total de: ${Utils.contarPreguntas(foro.preguntas)} preguntas.")
+            "0" -> println("Cerrando sesión...")
             else -> println("Escribe una opción valida (1-4)")
         }
     } while (opcio != "0")
@@ -125,6 +117,8 @@ fun sesionInvitado() {
 }
 fun main() {
     val foro = Foro()
+    // Para no tener que crear el usuario durante las pruebas
+    foro.registrarUsuario("Jordi", "123")
     var usuarioActual: Usuario? = null
     //var usuarioLog = false
     var seguirPrograma = 0
