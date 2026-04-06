@@ -20,6 +20,7 @@ class Utils() {
         
                         TÍTULO:      ${it.titulo}
                         CREADOR:     ${it.nombreAutor} ${it.idAutor}
+                        ID PREGUNTA: ${it.id}
           
                         DESCRIPCIÓN:
                         ${it.descripcion}

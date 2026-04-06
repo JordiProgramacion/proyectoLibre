@@ -79,6 +79,7 @@ fun menuMenuSesionIniciada() {
         3. Ver mis preguntas
         4. Buscar preguntas por ID de usuario
         5. Total preguntas aplicación
+        6. Responder a una pregunta
         0. Cerrar sesión
         ------------------------------------
     """.trimIndent())
@@ -86,7 +87,7 @@ fun menuMenuSesionIniciada() {
 fun hacerPregunta(foro: Foro, usuario: Usuario) {
     print("Escribe el titulo de la pregunta, ej: Ordenador roto. ")
     val titulo = readln().trim().replaceFirstChar { it.uppercase() }
-    print("Escribe la descripción de tu pregunta, ej: El ordenador se enciende\npero la pantalla no da señal. ")
+    print("Escribe la descripción de tu pregunta, ej: El ordenador se enciende pero la pantalla no da señal. ")
     val descripcion = readln().trim().replaceFirstChar { it.uppercase() }
     foro.crearPregunta(usuario.nom, usuario.id, titulo, descripcion)
 }
@@ -94,6 +95,13 @@ fun buscarPorId(foro: Foro) {
     print("Id a buscar: ")
     val id = readln().toIntOrNull() ?: 0
     Utils.buscarPorID(foro, id)
+}
+fun responderPregunta(foro: Foro, usuario: Usuario) {
+    print("Escribe el ID de la pregunta que quieres responder: ")
+    val idPregunta = readln().toIntOrNull() ?: 0
+    print("Escribe tu respuesta: ")
+    val respuesta = readln().trim().replaceFirstChar { it.uppercase() }
+    foro.responderPregunta(idPregunta, usuario.id, usuario.nom, respuesta)
 }
 fun menuSesionIniciada(foro: Foro, usuario: Usuario): Boolean {
     do {
@@ -106,6 +114,7 @@ fun menuSesionIniciada(foro: Foro, usuario: Usuario): Boolean {
             "3" -> foro.mostrarPreguntasPropias(foro.preguntas, usuario)
             "4" -> buscarPorId(foro)
             "5" -> println("Ahora mismo hay un total de: ${Utils.contarPreguntas(foro.preguntas)} preguntas.")
+            "6" -> responderPregunta(foro, usuario)
             "0" -> println("Cerrando sesión...")
             else -> println("Escribe una opción valida (1-4)")
         }

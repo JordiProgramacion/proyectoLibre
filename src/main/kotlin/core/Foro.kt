@@ -1,6 +1,7 @@
 package core
 
 import models.Pregunta
+import models.Respuesta
 import models.Usuario
 import models.UsuarioAdmin
 
@@ -12,6 +13,8 @@ class Foro() {
     private val administradores: MutableList<UsuarioAdmin> = mutableListOf()
     private val idS = usuarios.size + administradores.size + 1
     private val idsPreguntas = preguntas.size + 1
+    val respuestas: MutableList<Respuesta> = mutableListOf()
+    private val idSRespuestas = respuestas.size + 1
 
     fun anadirListaUsuarios(usuario: Usuario): Boolean {
         return usuarios.add(usuario)
@@ -54,24 +57,47 @@ class Foro() {
         println("La contraseña es incorrecta, asegurese de poner bien tanto el id como su contraseña para poder iniciar \nsesión correctamente.")
         return false
     }
+    fun responderPregunta(idPregunta: Int, idAutor: Int, nombreAutor: String, respuesta: String) {
+        val pregunta = preguntas.find { idPregunta == it.id }
+        if (pregunta != null) {
+            val nuevaRespuesta = Respuesta(nombreAutor, idAutor, idPregunta, respuesta, idSRespuestas)
+            respuestas.add(nuevaRespuesta)
+            println("La respuesta se ha añadido correctamente.")
+        } else {
+            println("No se ha encontrado ninguna pregunta con el id: $idPregunta")
+        }
+    }
     fun mostrarPreguntasTotales(preguntas: MutableList<Pregunta>) {
         if (preguntas.isEmpty()) {
             println("Todavía no hay ninguna pregunta, puedes escribir la primera!!!")
         } else {
-            preguntas.forEach {
+            preguntas.forEach { pregunta ->
                 println("""
-                ====================================================
-                |            INFORMACIÓN DE LA PREGUNTA            |
-                ====================================================
-        
-                TÍTULO:      ${it.titulo}
-                CREADOR:     ${it.nombreAutor}
-          
-                DESCRIPCIÓN:
-                ${it.descripcion}
-          
-                ====================================================
+            ====================================================
+            |            INFORMACIÓN DE LA PREGUNTA            |
+            ====================================================
+    
+            TÍTULO:      ${pregunta.titulo}
+            CREADOR:     ${pregunta.nombreAutor}
+            ID PREGUNTA: ${pregunta.id}
+      
+            DESCRIPCIÓN:
+            ${pregunta.descripcion}
             """.trimIndent())
+                val respuestasDeEstaPregunta = respuestas.filter { it.idPreguntaOriginal == pregunta.id }
+                if (respuestasDeEstaPregunta.isNotEmpty()) {
+                    println("""
+                |                RESPUESTAS                        |
+                ----------------------------------------------------""".trimIndent())
+
+                    respuestasDeEstaPregunta.forEach { resp ->
+                        println("""
+                    > @${resp.nombreAutor} respondió:
+                      "${resp.respuesta}"
+                    ----------------------------------------------------""".trimIndent())
+                    }
+                }
+                println("====================================================\n")
             }
         }
     }
@@ -89,6 +115,7 @@ class Foro() {
                 ====================================================
                   > ID PREGUNTA: #${it.id}
                   > TÍTULO:      ${it.titulo}
+                  > ID:          ${it.id}
     
                   DESCRIPCIÓN:
                   ${it.descripcion}
