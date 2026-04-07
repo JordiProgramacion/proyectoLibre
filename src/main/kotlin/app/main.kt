@@ -3,6 +3,7 @@ package app
 import core.Foro
 import utils.Utils
 import models.Usuario
+import utils.Regex
 // Todavía no se usa import models.UsuarioInvitado
 
 fun registroUsuario(foro: Foro) {
@@ -11,7 +12,11 @@ fun registroUsuario(foro: Foro) {
     print("Ahora ingrese una contraseña segura: ")
     // Implementar metodo para que no se vea la contraseña en el terminal
     val contrasenaNuevoUsuario = readln()
-    foro.registrarUsuario(nombre, contrasenaNuevoUsuario)
+    if (Regex.validarRegex(contrasenaNuevoUsuario)) {
+        foro.registrarUsuario(nombre, contrasenaNuevoUsuario)
+    } else {
+        println("La contraseña no es segura, asegurate de que tenga minimo una mayuscula, una minuscula, un numero y sea por lo menos de 8 caracteres.")
+    }
 }
 fun inicioSesion(foro: Foro): Usuario? {
     print("Bienvenido al panel de inicio de sesión, por favor ingrese su id: ")
