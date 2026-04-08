@@ -10,9 +10,12 @@ import utils.Regex
 fun registroUsuario(foro: Foro) {
     print("Bienvenido al panel de registro de usuarios, por favor ingrese su nombre: ")
     val nombre = readln().trim().replaceFirstChar {it.uppercase()}
+    if (nombre.isBlank()) {
+        return println("Tienes que escribir algo en el apartado de nombre.")
+    }
     print("Ahora ingrese una contraseña segura: ")
-    // Implementar metodo para que no se vea la contraseña en el terminal
     val contrasenaNuevoUsuario = readln()
+    // Implementar metodo para que no se vea la contraseña en el terminal
     if (Regex.validarRegex(contrasenaNuevoUsuario)) {
         foro.registrarUsuario(nombre, contrasenaNuevoUsuario)
     } else {
