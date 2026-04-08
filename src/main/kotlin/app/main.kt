@@ -100,6 +100,7 @@ fun menuMenuSesionIniciada(usuario: Usuario) {
         """.trimIndent())
     }
     println("""
+        11. Añadir correo electronico (gmail)
         0. Cerrar sesión
         ------------------------------------
     """.trimIndent())
@@ -185,13 +186,23 @@ fun menuSesionIniciada(foro: Foro, usuario: Usuario): Boolean {
                 println("Por hacer")
                 banearUsuario(foro)
             }
+            "11" -> mail(foro)
             "0" -> println("Cerrando sesión...")
             else -> println("Escribe una opción valida (1-4)")
         }
     } while (opcio != "0")
     return false
 }
-// Por hacer
+fun mail(foro: Foro) {
+    println("Escribe tu correo electronico (acabado el @insdanielblanxart.cat)")
+    val mail = readln().trim()
+     if (utils.Regex.mailRegex(mail)) {
+        println("Se ha añadido correctamente el mail, ahora podras recuperar tu contraseña desde este.")
+     } else {
+        println("El correo electornico no existe o no pertenece a @insdanielblanxart.cat, si no es un error\n contacta con un administrador para que te ayude.")
+     }
+}
+// Por hacer FALTA LA FUNCION PARA BANEAR USUARIOS !importante
 fun banearUsuario(foro: Foro) {
     foro.usuarios.forEach {
         println(it.identificarse())
@@ -238,9 +249,3 @@ fun main() {
         }
     } while (seguirPrograma != 0)
 }
-
-// TODO no permitir nada en blanco (isBlank) Pregunta
-// Linea 12
-// Los errores: los private val de los IDS solo se cargan una vez al iniciar
-// el programa no son dinamicos.
-// Linea 107 preguntas.
