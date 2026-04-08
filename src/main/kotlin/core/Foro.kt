@@ -199,13 +199,12 @@ class Foro() {
         println("Se ha devuelto el permiso de escritura del usuario ${usuario.nom}")
         return true
     }
-    fun existeMail(mail: String) {
+    fun existeMail(mail: String): Usuario? {
         val usuariosConMail = usuarios.find { it.mail == mail }
         if (usuariosConMail != null) {
-            automatizacionMail.verInformacionCuenta(usuarioConMail)
-            println("Hola ${usuariosConMail.nom}, en breve recibirá un correo electronico con información de su cuenta si no le llega\nel correo en 5 minutos vuelva a intentarlo, si el error persiste contacta con un administrador.")
+            return usuariosConMail
         } else {
-            println("No hay ningún usuarios con ese correo asignado, si tienes un correo asignado\n a tu cuenta que no es el tuyo contacta con un administrador para solucionar el problema.")
+            return null
         }
     }
 }

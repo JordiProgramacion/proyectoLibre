@@ -45,6 +45,7 @@ fun menuMenuDeInicio() {
             1. Iniciar sesión
             2. Registrarse
             3. Sesión de invitado (solo lectura) // ESTO SE IMPLEMENTARÁ EN LA SIGUIENTE VERSIÓN
+            4. Recuperar contraseña mediante un correo
             0. Salir del programa
             ------------------------
         """.trimIndent())
@@ -70,7 +71,7 @@ fun menuDeInicio(foro: Foro): Pair<Usuario?, Int> {
                 sesionInvitado() // Pendiente de arreglar, sesión invitado
                 return Pair(null, 1) // Hay que cambiar lo de que retorne null
             }
-            "4" -> recuperarContrasena()
+            "4" -> recuperarContrasena(foro)
             "0" -> {
                 println("Saliendo del programa...")
             }
@@ -79,13 +80,14 @@ fun menuDeInicio(foro: Foro): Pair<Usuario?, Int> {
     } while (opcio != "0")
     return Pair(null, 0)
 }
-fun recuperarContrasena() {
-    println("Escribe tu correo y te mandaremos un mail con tu información")
+fun recuperarContrasena(foro: Foro) {
+    println("Escribe tu correo y te mandaremos un mail con tu información.")
     val correo = readln().trim()
-    if (utils.Regex.mailRegex(correo)) {
-        println("ver si")
+    val usuarioRecuperar = foro.existeMail
+    if (usuarioRecuperar != null) {
+        automatizacionMail.verInformacionCuenta(usuarioRecuperar)
     } else {
-        println("Correo invalido, solo permitimos correos tipo @insdanilblanxart.cat")
+        println("El correo no pertence a ningún usuario, si es su verdadero mail contacta con un administrador para que arreglen su problema.")
     }
 }
 fun menuMenuSesionIniciada(usuario: Usuario) {
