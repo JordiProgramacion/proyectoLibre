@@ -6,7 +6,7 @@ class Automatizacion() {
 
     companion object {
 
-        fun verContrasena(usuario: Usuario) {
+        fun verInformacionCuenta(usuario: Usuario) {
             if (usuario.mail != null) {
                 // ACCIÓN PARA ENVIAR EL CORREO
             } else {

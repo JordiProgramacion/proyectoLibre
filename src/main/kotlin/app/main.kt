@@ -70,6 +70,7 @@ fun menuDeInicio(foro: Foro): Pair<Usuario?, Int> {
                 sesionInvitado() // Pendiente de arreglar, sesión invitado
                 return Pair(null, 1) // Hay que cambiar lo de que retorne null
             }
+            "4" -> recuperarContrasena()
             "0" -> {
                 println("Saliendo del programa...")
             }
@@ -77,6 +78,15 @@ fun menuDeInicio(foro: Foro): Pair<Usuario?, Int> {
         }
     } while (opcio != "0")
     return Pair(null, 0)
+}
+fun recuperarContrasena() {
+    println("Escribe tu correo y te mandaremos un mail con tu información")
+    val correo = readln().trim()
+    if (utils.Regex.mailRegex(correo)) {
+        println("ver si")
+    } else {
+        println("Correo invalido, solo permitimos correos tipo @insdanilblanxart.cat")
+    }
 }
 fun menuMenuSesionIniciada(usuario: Usuario) {
     println("""
@@ -186,17 +196,18 @@ fun menuSesionIniciada(foro: Foro, usuario: Usuario): Boolean {
                 println("Por hacer")
                 banearUsuario(foro)
             }
-            "11" -> mail(foro)
+            "11" -> mail(foro, usuario)
             "0" -> println("Cerrando sesión...")
             else -> println("Escribe una opción valida (1-4)")
         }
     } while (opcio != "0")
     return false
 }
-fun mail(foro: Foro) {
+fun mail(foro: Foro, usuario: Usuario()) {
     println("Escribe tu correo electronico (acabado el @insdanielblanxart.cat)")
     val mail = readln().trim()
      if (utils.Regex.mailRegex(mail)) {
+        usuario.mail = mail
         println("Se ha añadido correctamente el mail, ahora podras recuperar tu contraseña desde este.")
      } else {
         println("El correo electornico no existe o no pertenece a @insdanielblanxart.cat, si no es un error\n contacta con un administrador para que te ayude.")

@@ -4,6 +4,7 @@ import models.Pregunta
 import models.Respuesta
 import models.Usuario
 import models.UsuarioAdmin
+import automatizacion.automatizacionMail
 
 class Foro() {
 
@@ -195,7 +196,16 @@ class Foro() {
             return false
         }
         usuario.devolverEscritura()
-        println("Se ha devuel el permiso de escritura del usuario ${usuario.nom}")
+        println("Se ha devuelto el permiso de escritura del usuario ${usuario.nom}")
         return true
+    }
+    fun existeMail(mail: String) {
+        val usuariosConMail = usuarios.find { it.mail == mail }
+        if (usuariosConMail != null) {
+            automatizacionMail.verInformacionCuenta(usuarioConMail)
+            println("Hola ${usuariosConMail.nom}, en breve recibirá un correo electronico con información de su cuenta si no le llega\nel correo en 5 minutos vuelva a intentarlo, si el error persiste contacta con un administrador.")
+        } else {
+            println("No hay ningún usuarios con ese correo asignado, si tienes un correo asignado\n a tu cuenta que no es el tuyo contacta con un administrador para solucionar el problema.")
+        }
     }
 }
