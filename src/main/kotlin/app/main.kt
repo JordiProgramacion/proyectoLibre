@@ -107,8 +107,14 @@ fun menuMenuSesionIniciada(usuario: Usuario) {
 fun hacerPregunta(foro: Foro, usuario: Usuario) {
     print("Escribe el titulo de la pregunta, ej: Ordenador roto. ")
     val titulo = readln().trim().replaceFirstChar { it.uppercase() }
+    if (titulo.isBlank()) {
+        return println("El titulo no puede estar en blanco.")
+    }
     print("Escribe la descripción de tu pregunta, ej: El ordenador se enciende pero la pantalla no da señal. ")
     val descripcion = readln().trim().replaceFirstChar { it.uppercase() }
+    if (descripcion.isBlank()) {
+        return println("La descripción no puede estar en blanco")
+    }
     foro.crearPregunta(usuario.nom, usuario.id, titulo, descripcion)
 }
 fun buscarPorId(foro: Foro) {
@@ -121,6 +127,9 @@ fun responderPregunta(foro: Foro, usuario: Usuario) {
     val idPregunta = readln().toIntOrNull() ?: 0
     print("Escribe tu respuesta: ")
     val respuesta = readln().trim().replaceFirstChar { it.uppercase() }
+    if (respuesta.isBlank()) {
+        return println("Tu respuesta no puede estar en blanco, como vas a responder?")
+    }
     foro.responderPregunta(idPregunta, usuario.id, usuario.nom, respuesta)
 }
 fun menuSesionIniciada(foro: Foro, usuario: Usuario): Boolean {
@@ -231,3 +240,7 @@ fun main() {
 }
 
 // TODO no permitir nada en blanco (isBlank) Pregunta
+// Linea 12
+// Los errores: los private val de los IDS solo se cargan una vez al iniciar
+// el programa no son dinamicos.
+// Linea 107 preguntas.
