@@ -3,6 +3,7 @@ package app
 import core.Foro
 import utils.Utils
 import models.Usuario
+import models.UsuarioAdmin
 import utils.Regex
 // Todavía no se usa import models.UsuarioInvitado
 
@@ -74,7 +75,7 @@ fun menuDeInicio(foro: Foro): Pair<Usuario?, Int> {
     } while (opcio != "0")
     return Pair(null, 0)
 }
-fun menuMenuSesionIniciada() {
+fun menuMenuSesionIniciada(usuario: Usuario) {
     println("""
         ------------------------------------
         Bienvenido a StackOverflow 2.0!!!
@@ -85,6 +86,17 @@ fun menuMenuSesionIniciada() {
         4. Buscar preguntas por ID de usuario
         5. Total preguntas aplicación
         6. Responder a una pregunta
+    """.trimIndent())
+
+    if (usuario is UsuarioAdmin) {
+        println("""
+            7. Ver todos los usuarios registrados
+            8. Quitar permisos de escritura a usuario
+            9. Banear a un usuario
+            10. Eliminar a un usuario registrado
+        """.trimIndent())
+    }
+    println("""
         0. Cerrar sesión
         ------------------------------------
     """.trimIndent())
@@ -110,16 +122,28 @@ fun responderPregunta(foro: Foro, usuario: Usuario) {
 }
 fun menuSesionIniciada(foro: Foro, usuario: Usuario): Boolean {
     do {
-        menuMenuSesionIniciada()
+        menuMenuSesionIniciada(usuario)
         print("\nEscoja la opció que quiere hacer: ")
         val opcio = readln()
         when (opcio) {
             "1" -> foro.mostrarPreguntasTotales(foro.preguntas)
-            "2" -> hacerPregunta(foro, usuario)
+            "2" -> {
+                if (usuario.escritura == false) {
+                    println("No tienes permisos de escritura, si un administrador te he quitado los permisos puedes apelar enviando un correo a 'jmart3@insdanielblanxart.cat'")
+                    continue
+                }
+                hacerPregunta(foro, usuario)
+            }
             "3" -> foro.mostrarPreguntasPropias(foro.preguntas, usuario)
             "4" -> buscarPorId(foro)
             "5" -> println("Ahora mismo hay un total de: ${Utils.contarPreguntas(foro.preguntas)} preguntas.")
-            "6" -> responderPregunta(foro, usuario)
+            "6" -> {
+                if (usuario.escritura == false) {
+                    println("No tienes permisos de escritura, si un administrador te he quitado los permisos puedes apelar enviando un correo a 'jmart3@insdanielblanxart.cat'")
+                    continue
+                }
+                responderPregunta(foro, usuario)
+            }
             "0" -> println("Cerrando sesión...")
             else -> println("Escribe una opción valida (1-4)")
         }
@@ -133,6 +157,7 @@ fun main() {
     val foro = Foro()
     // Para no tener que crear el usuario durante las pruebas
     foro.registrarUsuario("Jordi", "123")
+    foro.registrarAdmin("Administrador", "EwnizEv5")
     var usuarioActual: Usuario? = null
     //var usuarioLog = false
     var seguirPrograma = 0

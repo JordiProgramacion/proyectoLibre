@@ -15,9 +15,13 @@ class Foro() {
     private val idsPreguntas = preguntas.size + 1
     val respuestas: MutableList<Respuesta> = mutableListOf()
     private val idSRespuestas = respuestas.size + 1
+    private val idSAdmins = administradores.size + usuarios.size + 1
 
     fun anadirListaUsuarios(usuario: Usuario): Boolean {
         return usuarios.add(usuario)
+    }
+    fun anadirListaAdministradores(usuarioAdmin: UsuarioAdmin): Boolean {
+        return administradores.add(usuarioAdmin)
     }
     fun crearPregunta(nomCreador: String, idCreador: Int, titulo: String, descripcion: String) {
         val idNuevaPregunta = idsPreguntas
@@ -34,27 +38,44 @@ class Foro() {
     }
     fun registrarUsuario(nom: String, contrasena: String) {
         val idNuevoUsuario = idS
-        val newUsuario = Usuario(nom = nom, id = idNuevoUsuario, contrasena = contrasena)
-        anadirListaUsuarios(newUsuario)
-        if (anadirListaUsuarios(newUsuario)) {
-            println("El usuario ${newUsuario.nom} con id ${newUsuario.id} se agrego correctamente, ya puede iniciar sesión\n(no olvide su id, sin el no podra acceder a la aplicación).")
+        val nuevoUsuario = Usuario(nom = nom, id = idNuevoUsuario, contrasena = contrasena)
+        if (anadirListaUsuarios(nuevoUsuario)) {
+            println("El usuario ${nuevoUsuario.nom} con id ${nuevoUsuario.id} se agrego correctamente, ya puede iniciar sesión\n(no olvide su id, sin el no podra acceder a la aplicación).")
+        }
+    }
+    // Hacer privada esta funcion una vez exista la persistencia de datos
+    fun registrarAdmin(nom: String, contrasena: String) {
+        val idAdministrador = idSAdmins
+        val nuevoAdministrador = UsuarioAdmin(nom, idAdministrador, contrasena = contrasena)
+        if (anadirListaAdministradores(nuevoAdministrador)) {
+            println("El usuario ${nuevoAdministrador.nom} con id ${nuevoAdministrador.id} se agrego correctamente, ya puede iniciar sesión\n(no olvide su id, sin el no podra acceder a la aplicación).")
         }
     }
     fun iniciarSesion(id: Int, contrasena: String): Boolean {
-        usuarios.forEach {
-            if (it.id == id) {
-                if (it.contrasena == contrasena) {
-                    it.iniciarSesion()
-                    println("Has iniciado sesión correctamente, bienvenido ${it.nom}.")
-                    return true
-                }
-                println("Contraseña incorrecta, vuelva a intentarlo y asegurese que el ID introducido es el de su cuenta.")
+
+        val usuario = usuarios.find { it.id == id }
+        if (usuario != null) {
+            if (usuario.contrasena == contrasena) {
+                usuario.iniciarSesion()
+                println("Inicio de sesión correcto, bienvenido ${usuario.nom}.")
+                return true
+            } else {
+                println("La contraseña es incorrecta.")
                 return false
             }
-            println("El id introducido no pertenece a ningun usuario.")
-            return false
         }
-        println("La contraseña es incorrecta, asegurese de poner bien tanto el id como su contraseña para poder iniciar \nsesión correctamente.")
+        val admin = administradores.find { it.id == id }
+        if (admin != null) {
+            if (admin.contrasena == contrasena) {
+                admin.iniciarSesion()
+                println("Has iniciado sesión como administrador, bienvenido ${admin.nom}.")
+                return true
+            } else {
+                println("La contraseña es incorrecta.")
+                return false
+            }
+        }
+        println("El id introducido no pertenece a ningún usuario, puedes registrare para poder iniciar sesión!")
         return false
     }
     fun responderPregunta(idPregunta: Int, idAutor: Int, nombreAutor: String, respuesta: String) {
