@@ -16,4 +16,7 @@ class UsuarioAdmin(nom: String, id: Int, sesion: Boolean = false, val permisos: 
         println("La sesión de administrador se ha cerrado.")
     }
 
+    override fun identificarse() {
+        println("Nombre: $nom, ID: $id, sesión: ${if (sesion) "esta iniciada" else "no esta iniciada"}, permisos: $permisos")
+    }
 }

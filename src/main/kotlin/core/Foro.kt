@@ -23,6 +23,16 @@ class Foro() {
     fun anadirListaAdministradores(usuarioAdmin: UsuarioAdmin): Boolean {
         return administradores.add(usuarioAdmin)
     }
+    fun quitarUsuario(id: Int): Boolean {
+        val usuarioEliminar = usuarios.find { it.id == id }
+        if (usuarioEliminar == null) {
+            println("El ID introducido no pertenece a ningun usuario.")
+            return false
+        }
+        usuarios.remove(usuarioEliminar)
+        println("Usuario eliminado correctamente")
+        return true
+    }
     fun crearPregunta(nomCreador: String, idCreador: Int, titulo: String, descripcion: String) {
         val idNuevaPregunta = idsPreguntas
         val nuevaPregunta = Pregunta(titulo, idNuevaPregunta, descripcion, nomCreador, idCreador)
@@ -49,6 +59,17 @@ class Foro() {
         val nuevoAdministrador = UsuarioAdmin(nom, idAdministrador, contrasena = contrasena)
         if (anadirListaAdministradores(nuevoAdministrador)) {
             println("El usuario ${nuevoAdministrador.nom} con id ${nuevoAdministrador.id} se agrego correctamente, ya puede iniciar sesión\n(no olvide su id, sin el no podra acceder a la aplicación).")
+        }
+    }
+    // Hacer esta funcion privada tambien
+    fun listarUsuarios() {
+        println("Lista de usuarios:")
+        usuarios.forEach {
+            println(it.identificarse())
+        }
+        println("Lista de administradores:")
+        administradores.forEach {
+            println(it.identificarse())
         }
     }
     fun iniciarSesion(id: Int, contrasena: String): Boolean {
@@ -148,5 +169,25 @@ class Foro() {
             """.trimIndent())
             }
         }
+    }
+    fun quitarEscritura(id: Int): Boolean {
+        val usuario = usuarios.find { it.id == id }
+        if (usuario == null) {
+            println("El ID introducido no pertenece a ningún usuario.")
+            return false
+        }
+        usuario.quitarEscritura()
+        println("Se ha eliminado el permiso de escritura del usuario ${usuario.nom}")
+        return true
+    }
+    fun darEscritura(id: Int): Boolean {
+        val usuario = usuarios.find { it.id == id }
+        if (usuario == null) {
+            println("El ID introducido no pertenece a ningún usuario.")
+            return false
+        }
+        usuario.devolverEscritura()
+        println("Se ha devuel el permiso de escritura del usuario ${usuario.nom}")
+        return true
     }
 }

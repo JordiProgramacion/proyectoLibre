@@ -92,8 +92,8 @@ fun menuMenuSesionIniciada(usuario: Usuario) {
         println("""
             7. Ver todos los usuarios registrados
             8. Quitar permisos de escritura a usuario
-            9. Banear a un usuario
-            10. Eliminar a un usuario registrado
+            9. Devolver permisos de escritura a usuario
+            10. Banear a un usuario (eliminar)
         """.trimIndent())
     }
     println("""
@@ -144,11 +144,63 @@ fun menuSesionIniciada(foro: Foro, usuario: Usuario): Boolean {
                 }
                 responderPregunta(foro, usuario)
             }
+            "7" -> {
+                if (usuario !is UsuarioAdmin) {
+                    println("Esta función solo esta disponible para administradores.")
+                    continue
+                }
+                foro.listarUsuarios()
+            }
+            "8" -> {
+                if (usuario !is UsuarioAdmin) {
+                    println("Esta función solo esta disponible para administradores.")
+                    continue
+                }
+                quitarPermisosEscritura(foro)
+            }
+            "9" -> {
+                if (usuario !is UsuarioAdmin) {
+                    println("Esta función solo esta disponible para administradores.")
+                    continue
+                }
+                darPermisosEscritura(foro)
+            }
+            "10" -> {
+                if (usuario !is UsuarioAdmin) {
+                    println("Esta función solo esta disponible para administradores.")
+                    continue
+                }
+                println("Por hacer")
+                banearUsuario(foro)
+            }
             "0" -> println("Cerrando sesión...")
             else -> println("Escribe una opción valida (1-4)")
         }
     } while (opcio != "0")
     return false
+}
+// Por hacer
+fun banearUsuario(foro: Foro) {
+    foro.usuarios.forEach {
+        println(it.identificarse())
+    }
+    println("ID del usuario a banear: ")
+    val id = readln().trim()
+    // Metodo del foro para banear AQUÍ
+}
+fun darPermisosEscritura(foro: Foro) {
+    val usuariosNoEscritura = foro.usuarios.filter { it.escritura == false }
+    usuariosNoEscritura.forEach { println(it.identificarse()) }
+    println("Escribe el ID del usuario a devolver el permiso de escritura: ")
+    val id = readln().trim().toIntOrNull() ?: -1
+    foro.darEscritura(id)
+}
+fun quitarPermisosEscritura(foro: Foro) {
+    val usuariosEscritura = foro.usuarios.filter { it.escritura == true }
+    usuariosEscritura.forEach { println(it.identificarse()) }
+    println("Escribe el ID del usuario a quitar el permiso de escritura: ")
+    val id = readln().trim().toIntOrNull() ?: -1
+    foro.quitarEscritura(id)
 }
 fun sesionInvitado() {
     println("Has iniciado sesión como invitado, solo podras leer conversaciones, si quieres participar puedes iniciar sesión, si no tienes cuenta, registrarte!!!")
