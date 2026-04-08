@@ -226,3 +226,5 @@ fun main() {
         }
     } while (seguirPrograma != 0)
 }
+
+// TODO no permitir nada en blanco (isBlank) Pregunta

@@ -11,11 +11,11 @@ class Foro() {
     private val baneados: MutableList<Usuario> = mutableListOf()
     val usuarios: MutableList<Usuario> = mutableListOf()
     private val administradores: MutableList<UsuarioAdmin> = mutableListOf()
-    private val idS = usuarios.size + administradores.size + 1
-    private val idsPreguntas = preguntas.size + 1
     val respuestas: MutableList<Respuesta> = mutableListOf()
-    private val idSRespuestas = respuestas.size + 1
-    private val idSAdmins = administradores.size + usuarios.size + 1
+    //  private val idSRespuestas = respuestas.size + 1
+    //  private val idSAdmins = administradores.size + usuarios.size + 1
+    //  private val idS = usuarios.size + administradores.size + 1
+    //  private val idsPreguntas = preguntas.size + 1
 
     fun anadirListaUsuarios(usuario: Usuario): Boolean {
         return usuarios.add(usuario)
@@ -34,7 +34,7 @@ class Foro() {
         return true
     }
     fun crearPregunta(nomCreador: String, idCreador: Int, titulo: String, descripcion: String) {
-        val idNuevaPregunta = idsPreguntas
+        val idNuevaPregunta = preguntas.size + 1
         val nuevaPregunta = Pregunta(titulo, idNuevaPregunta, descripcion, nomCreador, idCreador)
         val anadido = preguntas.add(nuevaPregunta)
         if (anadido) {
@@ -43,11 +43,18 @@ class Foro() {
             println("Error, la pregunta no se ha añadido.")
         }
     }
-    fun baneoUsuario() {
+    fun baneoUsuario(id: Int): Boolean {
 // POR HACER
+        val usuarioBaneado = usuarios.find { it.id == id }
+        if (usuarioBaneado == null) {
+            println("El ID no pertenece a ningún usuario.")
+            return false
+        }
+        // POR HACER
+        return true
     }
     fun registrarUsuario(nom: String, contrasena: String) {
-        val idNuevoUsuario = idS
+        val idNuevoUsuario = usuarios.size + administradores.size + 1
         val nuevoUsuario = Usuario(nom = nom, id = idNuevoUsuario, contrasena = contrasena)
         if (anadirListaUsuarios(nuevoUsuario)) {
             println("El usuario ${nuevoUsuario.nom} con id ${nuevoUsuario.id} se agrego correctamente, ya puede iniciar sesión\n(no olvide su id, sin el no podra acceder a la aplicación).")
@@ -55,7 +62,7 @@ class Foro() {
     }
     // Hacer privada esta funcion una vez exista la persistencia de datos
     fun registrarAdmin(nom: String, contrasena: String) {
-        val idAdministrador = idSAdmins
+        val idAdministrador = usuarios.size + administradores.size + 1
         val nuevoAdministrador = UsuarioAdmin(nom, idAdministrador, contrasena = contrasena)
         if (anadirListaAdministradores(nuevoAdministrador)) {
             println("El usuario ${nuevoAdministrador.nom} con id ${nuevoAdministrador.id} se agrego correctamente, ya puede iniciar sesión\n(no olvide su id, sin el no podra acceder a la aplicación).")
@@ -100,6 +107,7 @@ class Foro() {
         return false
     }
     fun responderPregunta(idPregunta: Int, idAutor: Int, nombreAutor: String, respuesta: String) {
+        val idSRespuestas = respuestas.size + 1
         val pregunta = preguntas.find { idPregunta == it.id }
         if (pregunta != null) {
             val nuevaRespuesta = Respuesta(nombreAutor, idAutor, idPregunta, respuesta, idSRespuestas)
