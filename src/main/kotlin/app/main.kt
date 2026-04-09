@@ -83,6 +83,7 @@ fun menuDeInicio(foro: Foro): Pair<Usuario?, Int> {
 }
 fun recuperarContrasena(foro: Foro) {
     println("Escribe tu correo y te mandaremos un mail con tu información.")
+    print("Correo: ")
     val correo = readln().trim()
     val usuarioRecuperar = foro.existeMail(correo)
     if (usuarioRecuperar != null) {
@@ -208,6 +209,7 @@ fun menuSesionIniciada(foro: Foro, usuario: Usuario): Boolean {
 }
 fun mail(foro: Foro, usuario: Usuario) {
     println("Escribe tu correo electronico (acabado el @insdanielblanxart.cat)")
+    print("Correo: ")
     val mail = readln().trim()
      if (utils.Regex.mailRegex(mail)) {
         usuario.mail = mail

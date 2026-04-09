@@ -15,45 +15,49 @@ class automatizacionMail() {
         val correoAdmin = "automatizacionkotlingerard@gmail.com"
 
         // No tiene que ser muy buena guardar la contraseña en codigo pero no hay otra manera sencilla de hacerlo.
-        val contraseña = "ecmf raub toaf kyci"
+        val contrasenya = utils.Contra.obtenerContrasena()
         // contra: EwnizEv5EwnizEv5
-        // clave de acceso:
-
         fun verInformacionCuenta(usuario: Usuario) {
-            // ... (toda la configuración de props y session se queda igual) ...
-            /*
+            val props = Properties().apply {
+                put("mail.smtp.host", "smtp.gmail.com")
+                put("mail.smtp.port", "587")
+                put("mail.smtp.auth", "true")
+                put("mail.smtp.starttls.enable", "true")
+            }
+            val session = Session.getInstance(props, object : Authenticator() {
+                override fun getPasswordAuthentication(): PasswordAuthentication {
+                    return PasswordAuthentication(correoAdmin, contrasenya)
+                }
+            })
             try {
                 val message = MimeMessage(session).apply {
-                    setFrom(InternetAddress(remitente))
-
-                    // Accedemos directamente a las propiedades del objeto usuario
-                    addRecipient(Message.RecipientType.TO, InternetAddress(usuario.mail))
-                    setSubject("Recuperación de cuenta - Foro Blanxart")
-
+                    setFrom(InternetAddress(correoAdmin))
+                    addRecipient(Message.RecipientType.TO, InternetAddress(usuario.mail!!))
+                    setSubject("Recuperación de cuenta - Foro StackOverflow 2.0")
                     setText("""
                 Hola ${usuario.nom},
 
                 Has solicitado tus datos de acceso al Foro.
+                Tu ID es: ${usuario.id}
                 Tu contraseña es: ${usuario.contrasena}
 
                 ¡Nos vemos en el foro!
             """.trimIndent())
                 }
-
                 Thread {
-                    Transport.send(message)
-                    println("\n[SISTEMA] Correo enviado a ${usuario.nom}")
+                    try {
+                        Transport.send(message)
+                        println("\n[SISTEMA] Correo enviado a ${usuario.nom} desde $correoAdmin")
+                    } catch (e: Exception) {
+                        println("\n[ERROR CRÍTICO] El servidor SMTP rechazó el envío: ${e.message}")
+                    }
                 }.start()
-
+                println("\nHola ${usuario.nom}, en breve recibirá un correo electrónico con información de su cuenta. " +
+                        "Si no le llega el correo en 5 minutos vuelva a intentarlo, si el error persiste contacta con un administrador.")
             } catch (e: Exception) {
-                println("[ERROR] No se pudo enviar el correo: ${e.message}")
+                println("\n[ERROR] Lo sentimos, ha ocurrido un error al procesar el envío: ${e.message}")
+                println("Por favor, inténtelo de nuevo más tarde o contacte con un administrador.")
             }
         }
-
- */
-        }
-        // Mensaje al enviar el correo:
-        // println("Hola ${usuariosConMail.nom}, en breve recibirá un correo electronico con información de su cuenta si no le llega\nel correo en 5 minutos vuelva a intentarlo, si el error persiste contacta con un administrador.")
     }
 }
-// por hacer

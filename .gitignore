@@ -15,7 +15,8 @@ build/
 out/
 !**/src/main/**/out/
 !**/src/test/**/out/
-
+### No mostramos la contraseña del mail ###
+src/main/kotlin/utils/Contra.kt
 ### Kotlin ###
 .kotlin
 
