@@ -19,7 +19,7 @@ class automatizacionMail() {
         // contra: EwnizEv5EwnizEv5
         // clave de acceso:
 
-        fun verInformacionUsuario(usuario: Usuario) {
+        fun verInformacionCuenta(usuario: Usuario) {
             // ... (toda la configuración de props y session se queda igual) ...
             /*
             try {
