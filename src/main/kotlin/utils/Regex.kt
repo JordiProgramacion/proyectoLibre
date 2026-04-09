@@ -10,7 +10,7 @@ class Regex {
         }
         // Otro regex pero este para validar un correo electronico
         fun mailRegex(mail: String): Boolean {
-            val mailRegex = "^[a-zA-Z0-9._%+-]+@insdanielblanxart\.cat$".toRegex()
+            val mailRegex = """^[a-zA-Z0-9._%+-]+@insdanielblanxart\.cat$""".toRegex()
             return mailRegex.matches(mail)
         }
     }

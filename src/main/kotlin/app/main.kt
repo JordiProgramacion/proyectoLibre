@@ -5,6 +5,7 @@ import utils.Utils
 import models.Usuario
 import models.UsuarioAdmin
 import utils.Regex
+import automatizacion.automatizacionMail
 // Todavía no se usa import models.UsuarioInvitado
 
 fun registroUsuario(foro: Foro) {
@@ -83,7 +84,7 @@ fun menuDeInicio(foro: Foro): Pair<Usuario?, Int> {
 fun recuperarContrasena(foro: Foro) {
     println("Escribe tu correo y te mandaremos un mail con tu información.")
     val correo = readln().trim()
-    val usuarioRecuperar = foro.existeMail
+    val usuarioRecuperar = foro.existeMail(correo)
     if (usuarioRecuperar != null) {
         automatizacionMail.verInformacionCuenta(usuarioRecuperar)
     } else {
@@ -205,7 +206,7 @@ fun menuSesionIniciada(foro: Foro, usuario: Usuario): Boolean {
     } while (opcio != "0")
     return false
 }
-fun mail(foro: Foro, usuario: Usuario()) {
+fun mail(foro: Foro, usuario: Usuario) {
     println("Escribe tu correo electronico (acabado el @insdanielblanxart.cat)")
     val mail = readln().trim()
      if (utils.Regex.mailRegex(mail)) {

@@ -20,3 +20,7 @@ kotlin {
 tasks.test {
     useJUnitPlatform()
 }
+// mail recuperación
+dependencies {
+    implementation("com.sun.mail:jakarta.mail:2.0.2")
+}

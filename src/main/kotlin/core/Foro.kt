@@ -4,7 +4,6 @@ import models.Pregunta
 import models.Respuesta
 import models.Usuario
 import models.UsuarioAdmin
-import automatizacion.automatizacionMail
 
 class Foro() {
 
