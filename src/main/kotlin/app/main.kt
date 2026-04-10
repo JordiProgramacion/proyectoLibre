@@ -8,6 +8,20 @@ import utils.Regex
 import automatizacion.automatizacionMail
 // Todavía no se usa import models.UsuarioInvitado
 
+// Funciones async
+import kotlinx.coroutines.*
+
+// Ponemos este arroba para que kotlin nos deje trabajar.
+@OptIn(DelicateCoroutinesApi::class)
+fun iniciarAvisoAutomatico() {
+    GlobalScope.launch {
+        while (true) {
+            delay(3 * 60 * 1000L)
+            println("\n\n[RECORDATORIO] ¡Si no tienes un correo registrado puedes añadir uno para prevenir la perdida de la cuenta!")
+            print("> ")
+        }
+    }
+}
 fun registroUsuario(foro: Foro) {
     print("Bienvenido al panel de registro de usuarios, por favor ingrese su nombre: ")
     val nombre = readln().trim().replaceFirstChar {it.uppercase()}
@@ -252,6 +266,7 @@ fun main() {
     var usuarioActual: Usuario? = null
     //var usuarioLog = false
     var seguirPrograma = 0
+    iniciarAvisoAutomatico()
     do {
         if (usuarioActual == null) {
             val (usuario, programa) = menuDeInicio(foro)

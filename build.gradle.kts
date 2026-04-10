@@ -23,4 +23,6 @@ tasks.test {
 // mail recuperación
 dependencies {
     implementation("com.sun.mail:jakarta.mail:2.0.2")
+    // Funciones async
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
 }
