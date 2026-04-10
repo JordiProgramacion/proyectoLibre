@@ -13,6 +13,7 @@ import kotlinx.coroutines.*
 
 // Ponemos este arroba para que kotlin nos deje trabajar.
 @OptIn(DelicateCoroutinesApi::class)
+// Se podría mejorar haciendo que el while sea mientras el usuario no tiene correo electronico para no molestar a los que ya tienen correo registrado.
 fun iniciarAvisoAutomatico() {
     GlobalScope.launch {
         while (true) {
@@ -42,15 +43,12 @@ fun inicioSesion(foro: Foro): Usuario? {
     val idUsuario = readln().toIntOrNull() ?: -1
     print("Ahora introduzca su contraseña: ")
     val contraUsuario = readln()
-
     val inicioSesion = foro.iniciarSesion(idUsuario, contraUsuario)
-    val usuario = foro.usuarios.find { it.id == idUsuario && it.contrasena == contraUsuario }
     return if (inicioSesion) {
-        usuario
+        foro.buscarUsuarioInicio(idUsuario, contraUsuario)
     } else {
         null
     }
-    // return foro.usuarios.find { it.id == id && it.contrasena == pass} (esto es una mejor opción, hay que mirarlo)
 }
 fun menuMenuDeInicio() {
     print("""

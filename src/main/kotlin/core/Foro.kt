@@ -206,4 +206,8 @@ class Foro() {
             return null
         }
     }
+    fun buscarUsuarioInicio(id: Int, contrasena: String): Usuario? {
+        return usuarios.find { it.id == id && it.contrasena == contrasena }
+            ?: administradores.find { it.id == id && it.contrasena == contrasena }
+    }
 }
