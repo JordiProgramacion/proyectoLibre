@@ -4,47 +4,25 @@ import models.Pregunta
 import models.Respuesta
 import models.Usuario
 import models.UsuarioAdmin
-import com.google.gson.reflect.TypeToken
-import persistencia.JsonRepository
 
-class Foro() {
+class ForoAntiguo() {
 
-    // 1. DEFINICIÓN DE REPOSITORIOS (Rutas de archivos)
-    private val repoUsuarios = JsonRepository<Usuario>("usuarios.json", object : TypeToken<List<Usuario>>() {}.type)
-    private val repoAdmins =
-        JsonRepository<UsuarioAdmin>("administradores.json", object : TypeToken<List<UsuarioAdmin>>() {}.type)
-    private val repoPreguntas = JsonRepository<Pregunta>("preguntas.json", object : TypeToken<List<Pregunta>>() {}.type)
-    private val repoRespuestas =
-        JsonRepository<Respuesta>("respuestas.json", object : TypeToken<List<Respuesta>>() {}.type)
-
-    // 2. CARGA DE DATOS INICIAL
-    // Al crear el objeto Foro, busca en los JSON. Si no existen, crea listas vacías.
-    val usuarios: MutableList<Usuario> = repoUsuarios.findAll().toMutableList()
-    private val administradores: MutableList<UsuarioAdmin> = repoAdmins.findAll().toMutableList()
-    val preguntas: MutableList<Pregunta> = repoPreguntas.findAll().toMutableList()
-    val respuestas: MutableList<Respuesta> = repoRespuestas.findAll().toMutableList()
-
-    // 3. FUNCIÓN MAESTRA DE GUARDADO
-    // Llama a esta función cada vez que modifiques algo manualmente desde el Main
-    fun guardarTodo() {
-        repoUsuarios.saveAll(usuarios)
-        repoAdmins.saveAll(administradores)
-        repoPreguntas.saveAll(preguntas)
-        repoRespuestas.saveAll(respuestas)
-    }
+    val preguntas: MutableList<Pregunta> = mutableListOf()
+    private val baneados: MutableList<Usuario> = mutableListOf()
+    val usuarios: MutableList<Usuario> = mutableListOf()
+    private val administradores: MutableList<UsuarioAdmin> = mutableListOf()
+    val respuestas: MutableList<Respuesta> = mutableListOf()
+    //  private val idSRespuestas = respuestas.size + 1
+    //  private val idSAdmins = administradores.size + usuarios.size + 1
+    //  private val idS = usuarios.size + administradores.size + 1
+    //  private val idsPreguntas = preguntas.size + 1
 
     fun anadirListaUsuarios(usuario: Usuario): Boolean {
-        val exito = usuarios.add(usuario)
-        if (exito) repoUsuarios.saveAll(usuarios) // Guardar al añadir
-        return exito
+        return usuarios.add(usuario)
     }
-
     fun anadirListaAdministradores(usuarioAdmin: UsuarioAdmin): Boolean {
-        val exito = administradores.add(usuarioAdmin)
-        if (exito) repoAdmins.saveAll(administradores) // Guardar al añadir
-        return exito
+        return administradores.add(usuarioAdmin)
     }
-
     fun quitarUsuario(id: Int): Boolean {
         val usuarioEliminar = usuarios.find { it.id == id }
         if (usuarioEliminar == null) {
@@ -52,96 +30,93 @@ class Foro() {
             return false
         }
         usuarios.remove(usuarioEliminar)
-        repoUsuarios.saveAll(usuarios) // Guardar tras eliminar
         println("Usuario eliminado correctamente")
         return true
     }
-
     fun crearPregunta(nomCreador: String, idCreador: Int, titulo: String, descripcion: String) {
         val idNuevaPregunta = preguntas.size + 1
         val nuevaPregunta = Pregunta(titulo, idNuevaPregunta, descripcion, nomCreador, idCreador)
-        if (preguntas.add(nuevaPregunta)) {
-            repoPreguntas.saveAll(preguntas) // Guardar pregunta nueva
+        val anadido = preguntas.add(nuevaPregunta)
+        if (anadido) {
             println("Se ha añadido la pregunta correctamente.")
         } else {
             println("Error, la pregunta no se ha añadido.")
         }
     }
-
+    fun baneoUsuario(id: Int): Boolean {
+// POR HACER
+        val usuarioBaneado = usuarios.find { it.id == id }
+        if (usuarioBaneado == null) {
+            println("El ID no pertenece a ningún usuario.")
+            return false
+        }
+        // POR HACER
+        return true
+    }
     fun registrarUsuario(nom: String, contrasena: String) {
         val idNuevoUsuario = usuarios.size + administradores.size + 1
         val nuevoUsuario = Usuario(nom = nom, id = idNuevoUsuario, contrasena = contrasena)
         if (anadirListaUsuarios(nuevoUsuario)) {
-            println("El usuario ${nuevoUsuario.nom} con id ${nuevoUsuario.id} se agregó correctamente.")
+            println("El usuario ${nuevoUsuario.nom} con id ${nuevoUsuario.id} se agrego correctamente, ya puede iniciar sesión\n(no olvide su id, sin el no podra acceder a la aplicación).")
         }
     }
-
+    // Hacer privada esta funcion una vez exista la persistencia de datos
     fun registrarAdmin(nom: String, contrasena: String) {
         val idAdministrador = usuarios.size + administradores.size + 1
         val nuevoAdministrador = UsuarioAdmin(nom, idAdministrador, contrasena = contrasena)
         if (anadirListaAdministradores(nuevoAdministrador)) {
-            println("El administrador ${nuevoAdministrador.nom} se agregó correctamente.")
+            println("El usuario ${nuevoAdministrador.nom} con id ${nuevoAdministrador.id} se agrego correctamente, ya puede iniciar sesión\n(no olvide su id, sin el no podra acceder a la aplicación).")
         }
     }
+    // Hacer esta funcion privada tambien
+    fun listarUsuarios() {
+        println("Lista de usuarios:")
+        usuarios.forEach {
+            println(it.identificarse())
+        }
+        println("Lista de administradores:")
+        administradores.forEach {
+            println(it.identificarse())
+        }
+    }
+    fun iniciarSesion(id: Int, contrasena: String): Boolean {
 
+        val usuario = usuarios.find { it.id == id }
+        if (usuario != null) {
+            if (usuario.contrasena == contrasena) {
+                usuario.iniciarSesion()
+                println("Inicio de sesión correcto, bienvenido ${usuario.nom}.")
+                return true
+            } else {
+                println("La contraseña es incorrecta.")
+                return false
+            }
+        }
+        val admin = administradores.find { it.id == id }
+        if (admin != null) {
+            if (admin.contrasena == contrasena) {
+                admin.iniciarSesion()
+                println("Has iniciado sesión como administrador, bienvenido ${admin.nom}.")
+                return true
+            } else {
+                println("La contraseña es incorrecta.")
+                return false
+            }
+        }
+        println("El id introducido no pertenece a ningún usuario, puedes registrare para poder iniciar sesión!")
+        return false
+    }
     fun responderPregunta(idPregunta: Int, idAutor: Int, nombreAutor: String, respuesta: String) {
         val idSRespuestas = respuestas.size + 1
         val pregunta = preguntas.find { idPregunta == it.id }
         if (pregunta != null) {
             val nuevaRespuesta = Respuesta(nombreAutor, idAutor, idPregunta, respuesta, idSRespuestas)
             respuestas.add(nuevaRespuesta)
-            repoRespuestas.saveAll(respuestas) // Guardar respuesta nueva
             println("La respuesta se ha añadido correctamente.")
         } else {
             println("No se ha encontrado ninguna pregunta con el id: $idPregunta")
         }
     }
-
-    fun quitarEscritura(id: Int): Boolean {
-        val usuario = usuarios.find { it.id == id }
-        if (usuario == null) return false
-        usuario.quitarEscritura()
-        repoUsuarios.saveAll(usuarios) // Guardar el cambio de estado
-        println("Permiso de escritura quitado.")
-        return true
-    }
-
-    fun darEscritura(id: Int): Boolean {
-        val usuario = usuarios.find { it.id == id }
-        if (usuario == null) return false
-        usuario.devolverEscritura()
-        repoUsuarios.saveAll(usuarios) // Guardar el cambio de estado
-        println("Permiso de escritura devuelto.")
-        return true
-    }
-
-    fun buscarUsuarioInicio(id: Int, contrasena: String): Usuario? {
-        return usuarios.find { it.id == id && it.contrasena == contrasena }
-            ?: administradores.find { it.id == id && it.contrasena == contrasena }
-    }
-
-    fun iniciarSesion(id: Int, contrasena: String): Boolean {
-        val user = buscarUsuarioInicio(id, contrasena)
-        return if (user != null) {
-            user.iniciarSesion()
-            println("Bienvenido ${user.nom}")
-            true
-        } else {
-            println("Credenciales incorrectas")
-            false
-        }
-    }
-
-    fun existeMail(mail: String): Usuario? {
-        return usuarios.find { it.mail == mail } ?: administradores.find { it.mail == mail }
-    }
-
-    // --- MÉTODOS DE MOSTRAR (Se quedan igual) ---
-    fun listarUsuarios() {
-        println("Usuarios:"); usuarios.forEach { println(it.identificarse()) }
-        println("Admins:"); administradores.forEach { println(it.identificarse()) }
-    }
-
     fun mostrarPreguntasTotales(preguntas: MutableList<Pregunta>) {
         if (preguntas.isEmpty()) {
             println("Todavía no hay ninguna pregunta, puedes escribir la primera!!!")
@@ -176,7 +151,6 @@ class Foro() {
             }
         }
     }
-
     fun mostrarPreguntasPropias(preguntas: MutableList<Pregunta>, usuario: Usuario) {
         // Hacemos otra lista con las preguntas buenas
         val misPreguntas = preguntas.filter { it.idAutor == usuario.id }
@@ -185,8 +159,7 @@ class Foro() {
             println("Todavía no has publicado ninguna pregunta.")
         } else {
             misPreguntas.forEach {
-                println(
-                    """
+                println("""
                 ====================================================
                 |              DETALLES DE LA PREGUNTA             |
                 ====================================================
@@ -201,9 +174,40 @@ class Foro() {
                   DATOS DEL AUTOR
                   ID: ${it.idAutor} | Nombre: ${it.nombreAutor}
                ====================================================
-            """.trimIndent()
-                )
+            """.trimIndent())
             }
         }
+    }
+    fun quitarEscritura(id: Int): Boolean {
+        val usuario = usuarios.find { it.id == id }
+        if (usuario == null) {
+            println("El ID introducido no pertenece a ningún usuario.")
+            return false
+        }
+        usuario.quitarEscritura()
+        println("Se ha eliminado el permiso de escritura del usuario ${usuario.nom}")
+        return true
+    }
+    fun darEscritura(id: Int): Boolean {
+        val usuario = usuarios.find { it.id == id }
+        if (usuario == null) {
+            println("El ID introducido no pertenece a ningún usuario.")
+            return false
+        }
+        usuario.devolverEscritura()
+        println("Se ha devuelto el permiso de escritura del usuario ${usuario.nom}")
+        return true
+    }
+    fun existeMail(mail: String): Usuario? {
+        val usuariosConMail = usuarios.find { it.mail == mail }
+        if (usuariosConMail != null) {
+            return usuariosConMail
+        } else {
+            return null
+        }
+    }
+    fun buscarUsuarioInicio(id: Int, contrasena: String): Usuario? {
+        return usuarios.find { it.id == id && it.contrasena == contrasena }
+            ?: administradores.find { it.id == id && it.contrasena == contrasena }
     }
 }

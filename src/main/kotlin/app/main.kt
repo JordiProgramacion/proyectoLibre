@@ -8,6 +8,9 @@ import utils.Regex
 import automatizacion.automatizacionMail
 // Todavía no se usa import models.UsuarioInvitado
 
+// Persistencia
+import persistencia.JsonRepository
+
 // Funciones async
 import kotlinx.coroutines.*
 
@@ -225,6 +228,7 @@ fun mail(foro: Foro, usuario: Usuario) {
     val mail = readln().trim()
      if (utils.Regex.mailRegex(mail)) {
         usuario.mail = mail
+         foro.guardarTodo()
         println("Se ha añadido correctamente el mail, ahora podras recuperar tu contraseña desde este.")
      } else {
         println("El correo electornico no existe o no pertenece a @insdanielblanxart.cat, si no es un error\n contacta con un administrador para que te ayude.")
@@ -259,8 +263,6 @@ fun sesionInvitado() {
 fun main() {
     val foro = Foro()
     // Para no tener que crear el usuario durante las pruebas
-    foro.registrarUsuario("Jordi", "123")
-    foro.registrarAdmin("Administrador", "EwnizEv5")
     var usuarioActual: Usuario? = null
     //var usuarioLog = false
     var seguirPrograma = 0
