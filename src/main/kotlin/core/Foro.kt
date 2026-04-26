@@ -64,9 +64,9 @@ class Foro() {
             println("El usuario ${nuevoUsuario.nom} con id ${nuevoUsuario.id} se agregó correctamente.")
         }
     }
-    fun registrarAdmin(nom: String, contrasena: String) {
+    fun registrarAdmin(nom: String, contrasena: String, mail: String) {
         val idAdministrador = usuarios.size + administradores.size + 1
-        val nuevoAdministrador = UsuarioAdmin(nom, idAdministrador, contrasena = contrasena)
+        val nuevoAdministrador = UsuarioAdmin(nom, idAdministrador, contrasena = contrasena, mail = mail)
         if (anadirListaAdministradores(nuevoAdministrador)) {
             println("El administrador ${nuevoAdministrador.nom} se agregó correctamente.")
         }

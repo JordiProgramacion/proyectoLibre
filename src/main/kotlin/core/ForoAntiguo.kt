@@ -61,9 +61,9 @@ class ForoAntiguo() {
         }
     }
     // Hacer privada esta funcion una vez exista la persistencia de datos
-    fun registrarAdmin(nom: String, contrasena: String) {
+    fun registrarAdmin(nom: String, contrasena: String, mail: String) {
         val idAdministrador = usuarios.size + administradores.size + 1
-        val nuevoAdministrador = UsuarioAdmin(nom, idAdministrador, contrasena = contrasena)
+        val nuevoAdministrador = UsuarioAdmin(nom, idAdministrador, contrasena = contrasena, mail = mail)
         if (anadirListaAdministradores(nuevoAdministrador)) {
             println("El usuario ${nuevoAdministrador.nom} con id ${nuevoAdministrador.id} se agrego correctamente, ya puede iniciar sesión\n(no olvide su id, sin el no podra acceder a la aplicación).")
         }

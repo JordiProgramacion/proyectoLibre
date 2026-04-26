@@ -1,7 +1,7 @@
 package models
 
-class UsuarioAdmin(nom: String, id: Int, sesion: Boolean = false, val permisos: Boolean = true, escritura: Boolean = true, contrasena: String):
-    Usuario(nom, id, sesion, escritura, contrasena) {
+class UsuarioAdmin(nom: String, id: Int, sesion: Boolean = false, val permisos: Boolean = true, escritura: Boolean = true, contrasena: String, mail: String?):
+    Usuario(nom, id, sesion, escritura, contrasena, mail) {
 
     fun banear(usuario: Usuario, numero: Int): Int {
         print("por hacer")
