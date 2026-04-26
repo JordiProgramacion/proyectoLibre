@@ -9,7 +9,6 @@ import persistencia.JsonRepository
 
 class Foro() {
 
-    // 1. DEFINICIÓN DE REPOSITORIOS (Rutas de archivos)
     private val repoUsuarios = JsonRepository<Usuario>("usuarios.json", object : TypeToken<List<Usuario>>() {}.type)
     private val repoAdmins =
         JsonRepository<UsuarioAdmin>("administradores.json", object : TypeToken<List<UsuarioAdmin>>() {}.type)
@@ -17,34 +16,26 @@ class Foro() {
     private val repoRespuestas =
         JsonRepository<Respuesta>("respuestas.json", object : TypeToken<List<Respuesta>>() {}.type)
 
-    // 2. CARGA DE DATOS INICIAL
-    // Al crear el objeto Foro, busca en los JSON. Si no existen, crea listas vacías.
     val usuarios: MutableList<Usuario> = repoUsuarios.findAll().toMutableList()
     private val administradores: MutableList<UsuarioAdmin> = repoAdmins.findAll().toMutableList()
     val preguntas: MutableList<Pregunta> = repoPreguntas.findAll().toMutableList()
     val respuestas: MutableList<Respuesta> = repoRespuestas.findAll().toMutableList()
-
-    // 3. FUNCIÓN MAESTRA DE GUARDADO
-    // Llama a esta función cada vez que modifiques algo manualmente desde el Main
     fun guardarTodo() {
         repoUsuarios.saveAll(usuarios)
         repoAdmins.saveAll(administradores)
         repoPreguntas.saveAll(preguntas)
         repoRespuestas.saveAll(respuestas)
     }
-
     fun anadirListaUsuarios(usuario: Usuario): Boolean {
         val exito = usuarios.add(usuario)
-        if (exito) repoUsuarios.saveAll(usuarios) // Guardar al añadir
+        if (exito) repoUsuarios.saveAll(usuarios)
         return exito
     }
-
     fun anadirListaAdministradores(usuarioAdmin: UsuarioAdmin): Boolean {
         val exito = administradores.add(usuarioAdmin)
-        if (exito) repoAdmins.saveAll(administradores) // Guardar al añadir
+        if (exito) repoAdmins.saveAll(administradores)
         return exito
     }
-
     fun quitarUsuario(id: Int): Boolean {
         val usuarioEliminar = usuarios.find { it.id == id }
         if (usuarioEliminar == null) {
@@ -52,11 +43,10 @@ class Foro() {
             return false
         }
         usuarios.remove(usuarioEliminar)
-        repoUsuarios.saveAll(usuarios) // Guardar tras eliminar
+        repoUsuarios.saveAll(usuarios)
         println("Usuario eliminado correctamente")
         return true
     }
-
     fun crearPregunta(nomCreador: String, idCreador: Int, titulo: String, descripcion: String) {
         val idNuevaPregunta = preguntas.size + 1
         val nuevaPregunta = Pregunta(titulo, idNuevaPregunta, descripcion, nomCreador, idCreador)
@@ -67,7 +57,6 @@ class Foro() {
             println("Error, la pregunta no se ha añadido.")
         }
     }
-
     fun registrarUsuario(nom: String, contrasena: String) {
         val idNuevoUsuario = usuarios.size + administradores.size + 1
         val nuevoUsuario = Usuario(nom = nom, id = idNuevoUsuario, contrasena = contrasena)
@@ -75,7 +64,6 @@ class Foro() {
             println("El usuario ${nuevoUsuario.nom} con id ${nuevoUsuario.id} se agregó correctamente.")
         }
     }
-
     fun registrarAdmin(nom: String, contrasena: String) {
         val idAdministrador = usuarios.size + administradores.size + 1
         val nuevoAdministrador = UsuarioAdmin(nom, idAdministrador, contrasena = contrasena)

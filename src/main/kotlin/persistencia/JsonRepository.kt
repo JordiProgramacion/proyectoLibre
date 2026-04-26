@@ -10,11 +10,11 @@ interface Repository<T> {
     fun saveAll(items: List<T>)
 }
 class JsonRepository<T>(
-    private val rutaArchivo: String,
+    private val archivoR: String,
     private val tipoClase: Type
 ) : Repository<T> {
     private val gson: Gson = GsonBuilder().setPrettyPrinting().create()
-    private val archivo = File(rutaArchivo)
+    private val archivo = File(archivoR)
     override fun findAll(): List<T> {
         if (!archivo.exists()) return emptyList()
         return try {
@@ -22,7 +22,7 @@ class JsonRepository<T>(
 
             gson.fromJson(contenido, tipoClase) ?: emptyList()
         } catch (e: Exception) {
-            println("Error al leer $rutaArchivo: ${e.message}")
+            println("Error al leer $archivoR: ${e.message}")
             emptyList()
         }
     }
@@ -31,7 +31,7 @@ class JsonRepository<T>(
             val jsonText = gson.toJson(items)
             archivo.writeText(jsonText)
         } catch (e: Exception) {
-            println("Error al guardar en $rutaArchivo: ${e.message}")
+            println("Error al guardar en $archivoR: ${e.message}")
         }
     }
 }
