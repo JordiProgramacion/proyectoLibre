@@ -6,6 +6,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Email
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -13,28 +14,41 @@ import androidx.compose.ui.unit.dp
 import core.Foro
 import models.Usuario
 import models.UsuarioAdmin
+import utils.Regex
 
 @Composable
 fun MainAppScreen(
     foro: Foro,
     usuario: Usuario,
     onLogout: () -> Unit,
-    onNavigateAdmin: () -> Unit // Parámetro nuevo para navegar
+    onNavigateAdmin: () -> Unit
 ) {
     var mostrarDialogoPregunta by remember { mutableStateOf(false) }
+    var mostrarDialogoCorreo by remember { mutableStateOf(false) }
     var filtroPropias by remember { mutableStateOf(false) }
-
-    // Trigger para refrescar la lista cuando se añade algo
     var refreshTrigger by remember { mutableStateOf(0) }
+
+    // Estado para el nuevo correo
+    var nuevoCorreo by remember { mutableStateOf(usuario.mail ?: "") }
+    var errorCorreo by remember { mutableStateOf("") }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("StackOverflow 2.0") },
+                title = {
+                    Column {
+                        Text("StackOverflow 2.0", style = MaterialTheme.typography.h6)
+                        Text("Usuario: ${usuario.nom} (ID: ${usuario.id})", style = MaterialTheme.typography.caption)
+                    }
+                },
                 backgroundColor = MaterialTheme.colors.primary,
                 contentColor = Color.White,
                 actions = {
-                    // Si es admin, mostramos el botón del panel
+                    // Botón para gestionar el Email
+                    IconButton(onClick = { mostrarDialogoCorreo = true }) {
+                        Icon(Icons.Default.Email, contentDescription = "Configurar Correo", tint = Color.White)
+                    }
+
                     if (usuario is UsuarioAdmin) {
                         TextButton(onClick = onNavigateAdmin) {
                             Text("ADMIN PANEL", color = Color.White)
@@ -42,71 +56,89 @@ fun MainAppScreen(
                     }
 
                     TextButton(onClick = onLogout) {
-                        Text("CERRAR SESIÓN", color = Color.White)
+                        Text("SALIR", color = Color.White)
                     }
                 }
             )
         },
         floatingActionButton = {
-            // Solo los que tienen permiso de escritura pueden ver el botón "+"
             if (usuario.escritura) {
                 FloatingActionButton(
                     onClick = { mostrarDialogoPregunta = true },
                     backgroundColor = MaterialTheme.colors.secondary
                 ) {
-                    Icon(Icons.Default.Add, contentDescription = "Nueva Pregunta")
+                    Icon(Icons.Default.Add, contentDescription = "Preguntar")
                 }
             }
         }
     ) { padding ->
         Column(modifier = Modifier.padding(padding).padding(16.dp)) {
-
-            // Filtros
-            Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
-                Button(
-                    onClick = { filtroPropias = false },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (!filtroPropias) MaterialTheme.colors.primary else Color.LightGray
-                    )
-                ) { Text("Todas las preguntas") }
-
-                Button(
-                    onClick = { filtroPropias = true },
-                    colors = ButtonDefaults.buttonColors(
-                        backgroundColor = if (filtroPropias) MaterialTheme.colors.primary else Color.LightGray
-                    )
-                ) { Text("Mis preguntas") }
+            Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                Button(onClick = { filtroPropias = false }) { Text("Todas") }
+                Button(onClick = { filtroPropias = true }) { Text("Mis Preguntas") }
             }
 
             Spacer(Modifier.height(16.dp))
 
-            // Lista de preguntas
-            val preguntasAMostrar = remember(filtroPropias, refreshTrigger) {
+            val preguntas = remember(filtroPropias, refreshTrigger) {
                 if (filtroPropias) foro.preguntas.filter { it.idAutor == usuario.id }
                 else foro.preguntas
             }
 
-            if (preguntasAMostrar.isEmpty()) {
-                Box(Modifier.fillMaxSize(), contentAlignment = androidx.compose.ui.Alignment.Center) {
-                    Text("No hay preguntas para mostrar.")
-                }
-            } else {
-                LazyColumn(modifier = Modifier.fillMaxSize()) {
-                    items(preguntasAMostrar) { pregunta ->
-                        PreguntaCard(pregunta, foro, usuario)
-                    }
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(preguntas) { pregunta ->
+                    PreguntaCard(pregunta, foro, usuario)
                 }
             }
         }
     }
 
-    // Lógica del diálogo para crear pregunta
+    // --- DIÁLOGO PARA AÑADIR/EDITAR CORREO ---
+    if (mostrarDialogoCorreo) {
+        AlertDialog(
+            onDismissRequest = { mostrarDialogoCorreo = false },
+            title = { Text("Vincular Email") },
+            text = {
+                Column {
+                    Text("Introduce un correo de @insdanielblanxart.cat para recuperar tu cuenta si olvidas la clave.")
+                    Spacer(Modifier.height(8.dp))
+                    OutlinedTextField(
+                        value = nuevoCorreo,
+                        onValueChange = { nuevoCorreo = it },
+                        label = { Text("Email Corporativo") },
+                        isError = errorCorreo.isNotEmpty(),
+                        modifier = Modifier.fillMaxWidth()
+                    )
+                    if (errorCorreo.isNotEmpty()) {
+                        Text(errorCorreo, color = MaterialTheme.colors.error, style = MaterialTheme.typography.caption)
+                    }
+                }
+            },
+            confirmButton = {
+                Button(onClick = {
+                    if (utils.Regex.mailRegex(nuevoCorreo)) {
+                        usuario.mail = nuevoCorreo
+                        foro.guardarTodo() // Guardamos en el JSON
+                        mostrarDialogoCorreo = false
+                        errorCorreo = ""
+                    } else {
+                        errorCorreo = "Debe ser un correo @insdanielblanxart.cat válido"
+                    }
+                }) { Text("Guardar") }
+            },
+            dismissButton = {
+                TextButton(onClick = { mostrarDialogoCorreo = false }) { Text("Cancelar") }
+            }
+        )
+    }
+
+    // Diálogo de nueva pregunta
     if (mostrarDialogoPregunta) {
         DialogoNuevaPregunta(
             onDismiss = { mostrarDialogoPregunta = false },
-            onConfirm = { titulo, descripcion ->
-                foro.crearPregunta(usuario.nom, usuario.id, titulo, descripcion)
-                refreshTrigger++ // Forzamos actualización de la lista
+            onConfirm = { titulo, desc ->
+                foro.crearPregunta(usuario.nom, usuario.id, titulo, desc)
+                refreshTrigger++
                 mostrarDialogoPregunta = false
             }
         )
